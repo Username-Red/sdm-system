@@ -1,3 +1,7 @@
+“You are braver than you believe, stronger than you seem, and smarter than you think.”
+
+- Christopher Robin to Winnie the Pooh
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started
