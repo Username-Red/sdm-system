@@ -5,7 +5,7 @@ import SignedIn from './components/Signed-in';
 import SignedOut from './components/Signed-out';
 import { useAuthState, useSignOut } from 'react-firebase-hooks/auth';
 import { auth } from './firebase/config';
-import {iconFidgetSpinner} from '@tabler/icons-react';
+//import {iconFidgetSpinner} from '@tabler/icons-react';
 
 const Home = () => {
   const [user, loading, error] = useAuthState(auth);
