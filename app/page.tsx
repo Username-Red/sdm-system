@@ -28,6 +28,17 @@ const Home = () => {
 
   // If user is not logged in, show the login form
   if (!user) {
+  const userdude = auth.currentUser;
+
+  if (userdude) {
+    console.log("User is signed in:", userdude.email);
+  } else {
+    console.log("No user is signed in.");
+  }
+
+  // tutorial complete
+
+
   return (
     <>
       <div>

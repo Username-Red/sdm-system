@@ -14,6 +14,16 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
+
+if (typeof window === "undefined") {
+  
+  const app = null;
+  const auth = null;
+} else {
+  const app = !getApps().length ? initializeApp(firebaseConfig) : getApps()[0];
+  const auth = getAuth(app);
+}
+
 // Initialize Firebase
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
 
