@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "../firebase/config";
 import { signOut } from "firebase/auth";
+import ThemeBtn from "./ThemeBtn";
 
 const Header = () => {
   const [user] = useAuthState(auth);
@@ -31,7 +32,7 @@ const Header = () => {
             <Link href="/auth/login" className="btn">Login</Link>
           </>
         )}
-
+        <ThemeBtn />
       </div>
     </div>
   );
