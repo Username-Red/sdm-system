@@ -15,9 +15,10 @@ import SignIn from './auth/login/page';
 // use doc to create a reference to the document, eg: doc(datbase, collection, documentID)
 const docRef = doc(database, "students", "3D9FVGr0i4YUxQ7SOfsH"); // collection "students", doc "3D9FVGr0i4YUxQ7SOfsH", should fetch "Marcus"
 // use getDoc to fetch the document snapshot
-const docSnap = await getDoc(docRef);
+// const docSnap = await getDoc(docRef);
 
 const Home = () => {
+  const [student, setStudent] = useState(null);
   const [user, loading, error] = useAuthState(auth);
   const [signOut, signingOut, signOutError] = useSignOut(auth);
 
@@ -28,34 +29,34 @@ const Home = () => {
 
   // If user is not logged in, show the login form
   if (!user) {
-  const userdude = auth.currentUser;
+    const userdude = auth.currentUser;
 
-  if (userdude) {
-    console.log("User is signed in:", userdude.email);
-  } else {
-    console.log("No user is signed in.");
-  }
+    if (userdude) {
+      console.log("User is signed in:", userdude.email);
+    } else {
+      console.log("No user is signed in.");
+    }
 
-  // tutorial complete
+    // tutorial complete
 
 
-  return (
-    <>
-      <div>
-      <h1>Welcome to Student Data Management System</h1>
-      <p>Please Login to Manage Student Records</p>
-      <p>{}</p>
-      </div>
+    return (
+      <>
+        <div>
+          <h1>Welcome to Student Data Management System</h1>
+          <p>Please Login to Manage Student Records</p>
+          <p>{ }</p>
+        </div>
 
-      <div className='mt-4'>
-        <SignIn />
-      </div>
+        <div className='mt-4'>
+          <SignIn />
+        </div>
 
-      <p className="mt-4">
-        Don't have an account?
-        <Link href="/signup" className="underline text-blue-600">Sign up</Link>
-      </p>
-    </>
+        <p className="mt-4">
+          Don't have an account?
+          <Link href="/signup" className="underline text-blue-600">Sign up</Link>
+        </p>
+      </>
     );
   }
 
@@ -68,8 +69,18 @@ const Home = () => {
       <Link href="/students" className="btn btn-primary mt-4">
         Go to Student Records
       </Link>
+
+      {student && (
+        <div className="mt-4">
+          <Link
+            href={`/edit-student/${student}`}
+            className="btn btn-primary"
+          >
+            Edit Record
+          </Link>
+        </div>
+      )}
     </div>
   );
 }
-
-export default Home
+export default Home;
