@@ -1,48 +1,79 @@
 "use client";
-import Link from 'next/link';
-import React from 'react'
-import SignedIn from './components/Signed-in';
-import SignedOut from './components/Signed-out';
-import { useAuthState, useSignOut } from 'react-firebase-hooks/auth';
-import { auth, database } from './firebase/config';
 
-// Firestore "tutorial" code to get document
+import React, { useState, useEffect } from "react";
+import SearchBar from "./components/SearchBar";
+import { auth, database } from "./firebase/config";
+import { useAuthState, useSignOut } from "react-firebase-hooks/auth";
+import { collection, getDocs } from "firebase/firestore";
 
-// Import Firestore functions
-import { getFirestore, doc, setDoc, getDoc } from "firebase/firestore";
-
-// use doc to create a reference to the document, eg: doc(datbase, collection, documentID)
-const docRef = doc(database, "students", "3D9FVGr0i4YUxQ7SOfsH"); // collection "students", doc "3D9FVGr0i4YUxQ7SOfsH", should fetch "Marcus"
-// use getDoc to fetch the document snapshot
-const docSnap = await getDoc(docRef);
+interface Student {
+  id: string;
+  name: string;
+  age?: number;
+  course?: string;
+}
 
 const Home = () => {
   const [user, loading, error] = useAuthState(auth);
   const [signOut, signingOut, signOutError] = useSignOut(auth);
 
-  // Check if document exists
-  if (docSnap.exists()) {
-    // Document data found, you can use it
-    console.log(docSnap.data());
-  } 
-  // Document does not exist
-  else {
-    // doc.data() will be undefined in this case, so log no document
-    console.log("No such document!");
-  }
+  const [searchTerm, setSearchTerm] = useState(""); // For SearchBar
+  const [students, setStudents] = useState<Student[]>([]); // All students
+  const [filteredStudents, setFilteredStudents] = useState<Student[]>([]); // Filtered results
 
-  // tutorial complete
+  // Fetch all students from Firestore
+  useEffect(() => {
+    const fetchStudents = async () => {
+      try {
+        const querySnapshot = await getDocs(collection(database, "students"));
+        const studentList: Student[] = [];
+       querySnapshot.forEach((doc) => {
+  studentList.push({ ...(doc.data() as Student), id: doc.id });
+        });
+        setStudents(studentList);
+        setFilteredStudents(studentList); // initial display
+      } catch (err) {
+        console.error("Error fetching students:", err);
+      }
+    };
 
+    fetchStudents();
+  }, []);
+
+  // Filter students as user types
+  useEffect(() => {
+    const filtered = students.filter((student) =>
+      student.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    setFilteredStudents(filtered);
+  }, [searchTerm, students]);
 
   return (
-    <>
-    <div>
+    <div className="p-4">
       <h1>Welcome to Student Data Management System</h1>
-      <p>Manage student records table coming soon</p>
-      <p>{}</p>
-    </div>
-    </>
-  )
-}
+      <p>Manage student records table below</p>
 
-export default Home
+      {/* SearchBar */}
+      <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+
+      {/* Display filtered students */}
+      <div className="mt-4">
+        {filteredStudents.length > 0 ? (
+          <ul>
+            {filteredStudents.map((student) => (
+              <li key={student.id}>
+                <strong>{student.name}</strong>{" "}
+                {student.age && `- Age: ${student.age}`}{" "}
+                {student.course && `- Course: ${student.course}`}
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p>No students found.</p>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default Home;
