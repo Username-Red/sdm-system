@@ -1,75 +1,62 @@
 "use client";
 import Link from 'next/link';
-import React, { use, useEffect, useState } from 'react'
-import SignedIn from './components/Signed-in';
-import SignedOut from './components/Signed-out';
+import React from 'react'
 import { useAuthState, useSignOut } from 'react-firebase-hooks/auth';
 import { auth, database } from './firebase/config';
 
-// Firestore "tutorial" code to get document
-
-// Import Firestore functions
-import { getFirestore, doc, setDoc, getDoc, DocumentReference } from "firebase/firestore";
+import { doc, getDoc } from "firebase/firestore";
 import SignIn from './auth/login/page';
 
-// use doc to create a reference to the document, eg: doc(datbase, collection, documentID)
-const docRef = doc(database, "students", "3D9FVGr0i4YUxQ7SOfsH"); // collection "students", doc "3D9FVGr0i4YUxQ7SOfsH", should fetch "Marcus"
-// use getDoc to fetch the document snapshot
+// Firestore document example
+const docRef = doc(database, "students", "3D9FVGr0i4YUxQ7SOfsH");
 const docSnap = await getDoc(docRef);
 
 const Home = () => {
-  const [user, loading, error] = useAuthState(auth);
-  const [signOut, signingOut, signOutError] = useSignOut(auth);
+  const [user, loading] = useAuthState(auth);
 
-  // When login is being checked
   if (loading) {
-    return <p >Checking Login...</p>;
-  }
-
-  // If user is not logged in, show the login form
-  if (!user) {
-  const userdude = auth.currentUser;
-
-  if (userdude) {
-    console.log("User is signed in:", userdude.email);
-  } else {
-    console.log("No user is signed in.");
-  }
-
-  // tutorial complete
-
-
-  return (
-    <>
-      <div>
-      <h1>Welcome to Student Data Management System</h1>
-      <p>Please Login to Manage Student Records</p>
-      <p>{}</p>
+    return (
+      <div className="min-h-screen flex items-center justify-center text-center">
+        <p className="text-lg">Checking Login...</p>
       </div>
-
-      <div className='mt-4'>
-        <SignIn />
-      </div>
-
-      <p className="mt-4">
-        Don't have an account?
-        <Link href="/signup" className="underline text-blue-600">Sign up</Link>
-      </p>
-    </>
     );
   }
 
-  // Loggin and have access to student data
-  return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold">Welcome, {user?.email}</h1>
-      <p className="mt-2">You are logged in.</p>
+  if (!user) {
+    const userdude = auth.currentUser;
 
-      <Link href="/students" className="btn btn-primary mt-4">
+    if (userdude) console.log("User is signed in:", userdude.email);
+    else console.log("No user is signed in.");
+
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center text-center px-4 bg-base-100">
+        <h1 className="text-base-content/70 text-3xl font-bold">Welcome to Student Data Management System</h1>
+        <p className="text-base-content/70 mt-2 text-lg">Please Login to Manage Student Records</p>
+
+        <div className="mt-6 w-full max-w-sm">
+          <SignIn />
+        </div>
+
+        <p className="mt-6 text-sm">
+          Don't have an account?{" "}
+          <Link href="/signup" className="underline text-blue-600">
+            Sign up
+          </Link>
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen flex flex-col items-center justify-center text-center p-6 bg-base-200">
+      <h1 className="text-3xl font-bold">Welcome, {user?.email}</h1>
+      <p className="mt-2 text-lg">You are logged in.</p>
+
+      <Link href="/students" className="btn btn-primary mt-6">
         Go to Student Records
       </Link>
     </div>
   );
-}
+};
 
-export default Home
+export default Home;
